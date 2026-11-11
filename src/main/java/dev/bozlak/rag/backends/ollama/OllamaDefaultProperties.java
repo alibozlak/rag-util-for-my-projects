@@ -1,4 +1,4 @@
-package dev.bozlak.rag.backends;
+package dev.bozlak.rag.backends.ollama;
 
 public class OllamaDefaultProperties {
 

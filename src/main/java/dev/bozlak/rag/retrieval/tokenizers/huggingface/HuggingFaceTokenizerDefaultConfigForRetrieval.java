@@ -1,4 +1,4 @@
-package dev.bozlak.rag.retrieval.tokenizers;
+package dev.bozlak.rag.retrieval.tokenizers.huggingface;
 
 import ai.djl.huggingface.tokenizers.HuggingFaceTokenizer;
 import dev.bozlak.rag.retrieval.TokenizerJsonFileNotFoundException;

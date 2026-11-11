@@ -1,6 +1,6 @@
-package dev.bozlak.rag.retrieval.backends;
+package dev.bozlak.rag.retrieval.backends.ollama;
 
-import dev.bozlak.rag.backends.OllamaDefaultProperties;
+import dev.bozlak.rag.backends.ollama.OllamaDefaultProperties;
 import dev.bozlak.rag.retrieval.EmbeddingModel;
 
 public class OllamaDefaultPropertiesForRetrieval {
