@@ -41,14 +41,14 @@ public class OllamaEmbeddingVectorServiceImpl implements OllamaEmbeddingVectorSe
 
         HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());
 
-        JsonObject jsonObject = JsonParser.parseString(httpResponse.body()).getAsJsonObject();
-        JsonArray jsonArray = jsonObject.getAsJsonArray("embeddings");
-
         if (httpResponse.statusCode() != 200)
             throw new EmbeddingVectorDidNotGenerateException(httpResponse.statusCode(), httpResponse.body());
 
+        JsonObject jsonObject = JsonParser.parseString(httpResponse.body()).getAsJsonObject();
+        JsonArray jsonArray = jsonObject.getAsJsonArray("embeddings");
+
         if (jsonArray == null || jsonArray.isEmpty())
-            throw new EmbeddingVectorDidNotGenerateException("Embedding backend null or empty vector array !!");
+            throw new EmbeddingVectorDidNotGenerateException("Embedding backend returned a null or empty vector array");
 
         float[] embeddingVector = this.gson.fromJson(jsonArray.get(0), float[].class);
         return embeddingVector;
