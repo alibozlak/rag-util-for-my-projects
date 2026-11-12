@@ -10,9 +10,15 @@ public enum EmbeddingModel {
     BGE_M3_567M("bge-m3:567m");
 
     private final String modelName;
+    private EmbeddingModelInfo embeddingModelInfo;
 
     EmbeddingModel(String modelName) {
         this.modelName = modelName;
+
+        switch (modelName) {
+            case "bge-m3:567m": this.embeddingModelInfo 
+                = new EmbeddingModelInfo(modelName, 8_192, 1_024, "F16"); break;
+        }
     }
 
     @Override
@@ -20,12 +26,8 @@ public enum EmbeddingModel {
         return this.modelName;
     }
 
-    public static EmbeddingModelInfo getModelInfos(EmbeddingModel embeddingModel) {
-        return switch (embeddingModel) {
-            case BGE_M3_567M -> new EmbeddingModelInfo(
-                    BGE_M3_567M.toString(), 8_192, 1_024, "F16"
-            );
-        };
+    public EmbeddingModelInfo getModelInfos() {
+        return this.embeddingModelInfo;
     }
 
     public static EmbeddingModel getDefaultEmbeddingModel() {

@@ -36,7 +36,7 @@ public class OllamaEmbeddingVectorServiceImpl implements OllamaEmbeddingVectorSe
             .uri(URI.create(fullApiEndpoint))
             .header("Content-Type", "application/json")
             .POST(HttpRequest.BodyPublishers.ofString(jsonRequestBody))
-            .timeout(Duration.ofSeconds(40))
+            .timeout(Duration.ofSeconds(100))
             .build();
 
         HttpResponse<String> httpResponse = httpClient.send(httpRequest, HttpResponse.BodyHandlers.ofString());

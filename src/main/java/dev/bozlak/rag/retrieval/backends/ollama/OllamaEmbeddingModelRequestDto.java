@@ -25,8 +25,7 @@ public class OllamaEmbeddingModelRequestDto {
             List.of(sentence), 
             OllamaDefaultPropertiesForRetrieval.TRUNCATE, 
             Map.of(
-                OllamaDefaultPropertiesForRetrieval.NUM_CTX_NAME, 
-                EmbeddingModel.getModelInfos(embeddingModel).maxTokenContextLength
+                OllamaDefaultPropertiesForRetrieval.NUM_CTX_NAME, embeddingModel.getModelInfos().maxTokenContextLength
             )
         );
     }
