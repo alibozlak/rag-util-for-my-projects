@@ -19,11 +19,34 @@ public class OllamaEmbeddingVectorServiceImpl implements OllamaEmbeddingVectorSe
     private final HttpClient httpClient;
     private final Gson gson;
 
+    /**
+     * Creates the Ollama embedding service.
+     * <p>
+     * Ollama must be running, and the model must be on your machine.
+     * For the default model, run {@code ollama pull bge-m3:567m} first.
+     * <p>
+     * {@link HttpClient} and {@link Gson} are thread-safe.
+     * Create the service one time and use it again and again.
+     *
+     * @param httpClient the client that sends the requests, for example {@code HttpClient.newHttpClient()}
+     * @param gson the object that reads and writes JSON, for example {@code new Gson()}
+     */
     public OllamaEmbeddingVectorServiceImpl(HttpClient httpClient, Gson gson) {
         this.httpClient = httpClient;
         this.gson = gson;
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Ollama does not cut long text, because {@code truncate} is {@code false}.
+     * Too long text gives an error.
+     * The request waits for an answer for up to 100 seconds.
+     *
+     * @throws EmbeddingVectorDidNotGenerateException if the Ollama status code is not 200
+     *         (for example, the model is not pulled or the text is too long),
+     *         or if the answer has no vector
+     */
     @Override
     public float[] getGeneratedEmbeddingVector(EmbeddingModel embeddingModel, String sentence, String fullApiEndpoint)
             throws IOException, InterruptedException 
@@ -59,6 +82,14 @@ public class OllamaEmbeddingVectorServiceImpl implements OllamaEmbeddingVectorSe
         return this.getGeneratedEmbeddingVector(EmbeddingModel.getDefaultEmbeddingModel(), sentence, fullApiEndpoint);
     }
 
+    /**
+     * {@inheritDoc}
+     * <p>
+     * The default URL is {@value OllamaDefaultPropertiesForRetrieval#API_FULL_ENDPOINT}.
+     *
+     * @throws EmbeddingVectorDidNotGenerateException if the Ollama status code is not 200,
+     *         or if the answer has no vector
+     */
     @Override
     public float[] getGeneratedEmbeddingVector(String sentence) throws IOException, InterruptedException {
         String apiDefaultEndpoint = OllamaDefaultPropertiesForRetrieval.API_FULL_ENDPOINT;

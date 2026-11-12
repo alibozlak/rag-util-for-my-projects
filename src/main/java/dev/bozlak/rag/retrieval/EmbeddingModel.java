@@ -21,15 +21,35 @@ public enum EmbeddingModel {
         }
     }
 
+    /**
+     * Returns the model name for the backend, for example {@code "bge-m3:567m"}.
+     * <p>
+     * The backend uses this name in the request.
+     *
+     * @return the model name
+     */
     @Override
     public String toString() {
         return this.modelName;
     }
 
+    /**
+     * Returns the details of this model:
+     * max token count, vector length and quantization.
+     *
+     * @return the model details
+     */
     public EmbeddingModelInfo getModelInfos() {
         return this.embeddingModelInfo;
     }
 
+    /**
+     * Returns the default model: {@link #BGE_M3_567M}.
+     * <p>
+     * Methods without an {@code EmbeddingModel} parameter use this model.
+     *
+     * @return the default model
+     */
     public static EmbeddingModel getDefaultEmbeddingModel() {
         return EmbeddingModel.BGE_M3_567M;
     }

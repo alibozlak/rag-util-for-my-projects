@@ -18,9 +18,20 @@ public class HuggingFaceTokenizerDefaultConfigForRetrieval {
      * Tokenizer Path: <b>models/embedding/tokenizer.json</b> <br>
      * Add Special Tokens: <b>true</b> <br>
      * Truncation: <b>false</b> <br>
+     * <p>
+     * The path starts from the working directory, not from the classpath.
+     * Run your project from the folder that has your {@code pom.xml}.
+     * <p>
+     * Put the {@code tokenizer.json} file of your embedding model in this path.
+     * You can find the download link in the Javadoc of each
+     * {@link dev.bozlak.rag.retrieval.EmbeddingModel EmbeddingModel} value.
+     * <p>
+     * Close the tokenizer when you finish. If you give it to
+     * {@link HuggingFaceTokenService}, the service closes it for you.
      *
-     * @return ai.djl.huggingface.tokenizers.HuggingFaceTokenizer
-     * @throws IOException
+     * @return a new tokenizer
+     * @throws TokenizerJsonFileNotFoundException if there is no file in the path
+     * @throws IOException if the tokenizer file cannot be read
      */
     public static HuggingFaceTokenizer huggingFaceTokenizer() throws IOException {
         return huggingFaceTokenizer(TOKENIZER_PATH);
@@ -30,9 +41,17 @@ public class HuggingFaceTokenizerDefaultConfigForRetrieval {
      * Default config for Hugging Face Tokenizer. <br>
      * Add Special Tokens: <b>true</b> <br>
      * Truncation: <b>false</b> <br>
+     * <p>
+     * Use this method when your tokenizer file is not in the default path.
+     * A relative path starts from the working directory.
+     * <p>
+     * Close the tokenizer when you finish. If you give it to
+     * {@link HuggingFaceTokenService}, the service closes it for you.
      *
-     * @return ai.djl.huggingface.tokenizers.HuggingFaceTokenizer
-     * @throws IOException
+     * @param tokenizerJsonPath the path of the {@code tokenizer.json} file
+     * @return a new tokenizer
+     * @throws TokenizerJsonFileNotFoundException if there is no file in the path
+     * @throws IOException if the tokenizer file cannot be read
      */
     public static HuggingFaceTokenizer huggingFaceTokenizer(String tokenizerJsonPath) throws IOException {
         Path path = getTokenizerJsonAbsolutePath(tokenizerJsonPath);
