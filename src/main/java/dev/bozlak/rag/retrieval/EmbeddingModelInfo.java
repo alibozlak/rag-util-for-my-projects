@@ -4,7 +4,7 @@ public class EmbeddingModelInfo {
 
     public final String modelName;
     public final int maxTokenContextLength;
-    public final int embeddingLength ;
+    public final int embeddingLength;
     public final String quantization;
 
     public EmbeddingModelInfo(

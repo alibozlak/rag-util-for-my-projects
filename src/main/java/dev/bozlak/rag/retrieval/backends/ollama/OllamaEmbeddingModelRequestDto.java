@@ -16,15 +16,17 @@ public class OllamaEmbeddingModelRequestDto {
     public final Map<String, Object> options; 
 
     public OllamaEmbeddingModelRequestDto(String sentence) {
-        this(OllamaDefaultPropertiesForRetrieval.EMBEDDING_MODEL, sentence);
+        this(EmbeddingModel.getDefaultEmbeddingModel(), sentence);
     }
 
     public OllamaEmbeddingModelRequestDto(EmbeddingModel embeddingModel, String sentence) {
         this(
-            embeddingModel.getInfos().modelName, 
+            embeddingModel.toString(), 
             List.of(sentence), 
             OllamaDefaultPropertiesForRetrieval.TRUNCATE, 
-            Map.of(OllamaDefaultPropertiesForRetrieval.NUM_CTX_NAME, embeddingModel.getInfos().maxTokenContextLength)
+            Map.of(
+                OllamaDefaultPropertiesForRetrieval.NUM_CTX_NAME, embeddingModel.getModelInfos().maxTokenContextLength
+            )
         );
     }
 
