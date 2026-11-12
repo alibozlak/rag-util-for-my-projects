@@ -21,10 +21,13 @@ public class OllamaEmbeddingModelRequestDto {
 
     public OllamaEmbeddingModelRequestDto(EmbeddingModel embeddingModel, String sentence) {
         this(
-            embeddingModel.getInfos().modelName, 
+            embeddingModel.toString(), 
             List.of(sentence), 
             OllamaDefaultPropertiesForRetrieval.TRUNCATE, 
-            Map.of(OllamaDefaultPropertiesForRetrieval.NUM_CTX_NAME, embeddingModel.getInfos().maxTokenContextLength)
+            Map.of(
+                OllamaDefaultPropertiesForRetrieval.NUM_CTX_NAME, 
+                EmbeddingModel.getModelInfos(embeddingModel).maxTokenContextLength
+            )
         );
     }
 

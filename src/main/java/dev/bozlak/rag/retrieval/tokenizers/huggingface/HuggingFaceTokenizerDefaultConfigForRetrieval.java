@@ -2,6 +2,7 @@ package dev.bozlak.rag.retrieval.tokenizers.huggingface;
 
 import ai.djl.huggingface.tokenizers.HuggingFaceTokenizer;
 import dev.bozlak.rag.retrieval.TokenizerJsonFileNotFoundException;
+import dev.bozlak.rag.retrieval.tokenizers.TokenizerDefaultConfig;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -12,7 +13,7 @@ public class HuggingFaceTokenizerDefaultConfigForRetrieval {
     public static final boolean TRUNCATION = false;
     public static final boolean ADD_SPECIAL_TOKENS = true;
     public static final String TOKENIZER_PATH = "models/embedding/tokenizer.json";
-    public static final int TOKEN_SAFETY_MARGIN = 500;
+    public static final int TOKEN_SAFETY_MARGIN = TokenizerDefaultConfig.TOKEN_SAFETY_MARGIN;
 
     /**
      * Default config for Hugging Face Tokenizer. <br>

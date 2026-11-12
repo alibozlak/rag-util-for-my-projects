@@ -20,10 +20,10 @@ public enum EmbeddingModel {
         return this.modelName;
     }
 
-    public EmbeddingModelInfo getInfos() {
-        return switch (this) {
+    public static EmbeddingModelInfo getModelInfos(EmbeddingModel embeddingModel) {
+        return switch (embeddingModel) {
             case BGE_M3_567M -> new EmbeddingModelInfo(
-                    "bge-m3:567m", 8_192, 1_024, "F16"
+                    BGE_M3_567M.toString(), 8_192, 1_024, "F16"
             );
         };
     }
