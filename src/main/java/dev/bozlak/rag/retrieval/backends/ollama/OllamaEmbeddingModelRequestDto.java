@@ -16,7 +16,7 @@ public class OllamaEmbeddingModelRequestDto {
     public final Map<String, Object> options; 
 
     public OllamaEmbeddingModelRequestDto(String sentence) {
-        this(OllamaDefaultPropertiesForRetrieval.EMBEDDING_MODEL, sentence);
+        this(EmbeddingModel.getDefaultEmbeddingModel(), sentence);
     }
 
     public OllamaEmbeddingModelRequestDto(EmbeddingModel embeddingModel, String sentence) {

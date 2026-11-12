@@ -28,4 +28,8 @@ public enum EmbeddingModel {
         };
     }
 
+    public static EmbeddingModel getDefaultEmbeddingModel() {
+        return EmbeddingModel.BGE_M3_567M;
+    }
+
 }

@@ -5,6 +5,9 @@ import dev.bozlak.rag.retrieval.tokenizers.huggingface.HuggingFaceTokenizerDefau
 
 public interface TokenService {
 
+    void validateTokenCount(EmbeddingModel embeddingModel, String sentence);
+    void validateTokenCount(String sentence);
+
     static void validateTokenCount(EmbeddingModel embeddingModel, String sentence, Tokenizer tokenizer){
         int tokenCount = tokenizer.tokenize(sentence).size();
         int maxTokenCount = embeddingModel.getInfos().maxTokenContextLength -
