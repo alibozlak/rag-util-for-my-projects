@@ -3,7 +3,7 @@ package dev.bozlak.rag.retrieval;
 import ai.djl.modality.nlp.preprocess.Tokenizer;
 import dev.bozlak.rag.retrieval.tokenizers.TokenizerDefaultConfig;
 
-public interface TokenService {
+public interface TokenService extends AutoCloseable {
 
     /**
      * Checks that the sentence is not too long for the embedding model.
