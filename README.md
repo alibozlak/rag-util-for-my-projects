@@ -78,35 +78,76 @@ curl -L --create-dirs -o models/embedding/tokenizer.json https://huggingface.co/
 
 ## Usage
 
+The library does not need Spring. But in a Spring or Spring Boot project, create the services as beans in one `@Configuration` class.
+A bean is a singleton by default, so Spring creates each service only one time.
+
 ```java
+import java.io.IOException;
 import java.net.http.HttpClient;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import com.google.gson.Gson;
 
-import dev.bozlak.rag.retrieval.backends.EmbeddingVectorService;
-import dev.bozlak.rag.retrieval.backends.ollama.OllamaEmbeddingVectorServiceImpl;
-import dev.bozlak.rag.retrieval.tokenizers.huggingface.HuggingFaceTokenService;
+import dev.bozlak.rag.retrieval.backends.ollama.EmbeddingVectorService;
+import dev.bozlak.rag.retrieval.TokenService;
 import dev.bozlak.rag.retrieval.tokenizers.huggingface.HuggingFaceTokenizerDefaultConfigForRetrieval;
 
-public class Example {
+@Configuration
+public class RagUtilConfig {
 
-    public static void main(String[] args) throws Exception {
-        try (HttpClient httpClient = HttpClient.newHttpClient();
-             HuggingFaceTokenService tokenService = new HuggingFaceTokenService(
-                     HuggingFaceTokenizerDefaultConfigForRetrieval.huggingFaceTokenizer())) {
+    // Spring calls close() when the application stops. This frees the native memory of the tokenizer.
+    @Bean
+    public TokenService tokenService() throws IOException {
+        return new HuggingFaceTokenService(HuggingFaceTokenizerDefaultConfigForRetrieval.huggingFaceTokenizer());
+    }
 
-            EmbeddingVectorService embeddingService = new OllamaEmbeddingVectorServiceImpl(httpClient, new Gson());
+    @Bean
+    public EmbeddingVectorService embeddingVectorService() {
+        return new OllamaEmbeddingVectorServiceImpl(this.httpClient(), this.gson());
+    }
 
-            String sentence = "What is retrieval-augmented generation?";
+    @Bean
+    public Gson gson() {
+        return new Gson();
+    }
 
-            // 1. Check the token count first. The embedding service does not do it.
-            tokenService.validateTokenCount(sentence);
+    @Bean 
+    public HttpClient httpClient() {
+        return HttpClient.newHttpClient();
+    }
+}
+```
 
-            // 2. Create the embedding vector.
-            float[] vector = embeddingService.getGeneratedEmbeddingVector(sentence);
+Then inject the services into your own classes. Use the interfaces `TokenService` and `EmbeddingVectorService`.
+So your code does not depend on the Hugging Face or Ollama classes.
 
-            System.out.println("Vector length: " + vector.length);
-        }
+```java
+import java.io.IOException;
+
+import org.springframework.stereotype.Service;
+
+import dev.bozlak.rag.retrieval.TokenService;
+import dev.bozlak.rag.retrieval.backends.EmbeddingVectorService;
+
+@Service
+public class MyRagService {
+
+    private final TokenService tokenService;
+    private final EmbeddingVectorService embeddingVectorService;
+
+    public MyRagService(TokenService tokenService, EmbeddingVectorService embeddingVectorService) {
+        this.tokenService = tokenService;
+        this.embeddingVectorService = embeddingVectorService;
+    }
+
+    public float[] createEmbeddingVector(String sentence) throws IOException, InterruptedException {
+        // 1. Check the token count first. The embedding service does not do it.
+        tokenService.validateTokenCount(sentence);
+
+        // 2. Create the embedding vector.
+        return embeddingVectorService.getGeneratedEmbeddingVector(sentence);
     }
 }
 ```
@@ -120,29 +161,40 @@ There are two steps:
 
 Some tips:
 
-- Create the services one time when your application starts. Then use them again and again.
-- Close `HuggingFaceTokenService` when you finish. It frees the native memory of the tokenizer.
-  You can use it in a try-with-resources block, like in the example.
+- Do not create the services with `new` in your methods. The tokenizer reads a big file
+  (about 17 MB for bge-m3) and uses native memory. Create it only one time, as a bean.
+- Spring calls `close()` of `HuggingFaceTokenService` when the application stops. You do not need to close it yourself.
+- If the tokenizer file is not found, the application does not start (`TokenizerJsonFileNotFoundException`).
+  So you see the problem early.
+- Without Spring, create the services one time with `new` when your application starts.
+  Call `close()` of `HuggingFaceTokenService` when the application stops.
 - Without an `EmbeddingModel` parameter, the methods use the default model (`BGE_M3_567M`).
 - Without a URL parameter, the embedding service uses `http://localhost:11434/api/embed`.
 
 ### Another model or another Ollama URL
+
+For example, in `MyRagService`:
 
 ```java
 EmbeddingModel model = EmbeddingModel.BGE_M3_567M;
 String url = "http://192.168.1.20:11434/api/embed";
 
 tokenService.validateTokenCount(model, sentence);
-float[] vector = embeddingService.getGeneratedEmbeddingVector(model, sentence, url);
+float[] vector = embeddingVectorService.getGeneratedEmbeddingVector(model, sentence, url);
 ```
 
 The URL must be full. Only a path, like `/api/embed`, does not work.
 
 ### Tokenizer in another path
 
+Give the path in the bean method of `RagUtilConfig`:
+
 ```java
-HuggingFaceTokenizer tokenizer =
-        HuggingFaceTokenizerDefaultConfigForRetrieval.huggingFaceTokenizer("config/bge-m3/tokenizer.json");
+@Bean
+public HuggingFaceTokenService huggingFaceTokenService() throws IOException {
+    return new HuggingFaceTokenService(
+            HuggingFaceTokenizerDefaultConfigForRetrieval.huggingFaceTokenizer("config/bge-m3/tokenizer.json"));
+}
 ```
 
 A relative path also starts from the working directory.
