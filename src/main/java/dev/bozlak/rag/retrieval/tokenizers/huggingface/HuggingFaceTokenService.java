@@ -4,7 +4,7 @@ import ai.djl.huggingface.tokenizers.HuggingFaceTokenizer;
 import dev.bozlak.rag.retrieval.EmbeddingModel;
 import dev.bozlak.rag.retrieval.TokenService;
 
-public class HuggingFaceTokenService implements TokenService, AutoCloseable {
+public class HuggingFaceTokenService implements TokenService {
 
     private final HuggingFaceTokenizer huggingFaceTokenizer;
 
